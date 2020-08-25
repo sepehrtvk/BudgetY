@@ -1,5 +1,7 @@
 // Budget Controller
-var budgetController = (function () {})();
+var budgetController = (function () {
+    
+})();
 
 // UI Controller
 var UIController = (function () {
@@ -27,18 +29,32 @@ var UIController = (function () {
 // Controller
 var controller = (function (budgetCtrl, UICtrl) {
 
-    var DOMStrings = UICtrl.getDOMStrings();
+    var setupEventListeners = function() {
+
+        var DOMStrings = UICtrl.getDOMStrings();
+
+        document.querySelector(DOMStrings.inputBtn).addEventListener("click", ctrlAddItem);
+
+        document.addEventListener("keypress", function (e) {
+          if (e.keyCode === 13 || e.which === 13) {
+            ctrlAddItem();
+          }
+        });
+      
+    };
 
   var ctrlAddItem = function () {
     var input = UICtrl.getInput();
     console.log(input);
   };
 
-  document.querySelector(DOMStrings.inputBtn).addEventListener("click", ctrlAddItem);
-
-  document.addEventListener("keypress", function (e) {
-    if (e.keyCode === 13 || e.which === 13) {
-      ctrlAddItem();
-    }
-  });
+  return{
+      init: function(){
+          setupEventListeners();
+      }
+  };
 })(budgetController, UIController);
+
+
+// init the App.
+controller.init();
