@@ -22,6 +22,26 @@ var budgetController = (function () {
         }
     }
 
+    return{
+      addItem: function(type,des,val){
+        var newItem , ID;
+
+        //make ID
+        if(data.allItmes[type].lenght>0){
+        ID = data.allItmes[type][data.allItmes[type].lenght - 1].id + 1;
+        }else ID= 0;
+        
+        //make new item
+        type==='inc' ? newItem=new Income(ID,des,val) : newItem = new Expense(ID,des,val);
+
+        //push to array
+        data.allItmes[type].push(newItem);
+        return newItem;
+        
+      }
+
+    };
+
 })();
 
 // UI Controller
@@ -65,8 +85,11 @@ var controller = (function (budgetCtrl, UICtrl) {
     };
 
   var ctrlAddItem = function () {
+
     var input = UICtrl.getInput();
-    console.log(input);
+
+    var newItem = budgetCtrl.addItem(input.type,input.description,input.value);
+
   };
 
   return{
