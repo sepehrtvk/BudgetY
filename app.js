@@ -129,6 +129,12 @@ var UIController = (function () {
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
     },
 
+    deleteItemList: function(selectorID){
+      var el = document.getElementById(selectorID);
+      el.parentNode.removeChild(el);
+
+    },
+
     clearFields: function () {
       var fields, fieldsArr;
 
@@ -209,12 +215,16 @@ var controller = (function (budgetCtrl, UICtrl) {
   var ctrlDeleteItem = function (e) {
     var itemID, ID, type, splitID;
 
+    itemID = e.target.parentNode.parentNode.parentNode.parentNode.id;
+
     if (itemID) {
       splitID = itemID.split("-");
       type = splitID[0];
       ID = parseInt(splitID[1]);
 
       budgetCtrl.deleteItem(type,ID);
+      UICtrl.deleteItemList(itemID);
+      updateBudget();
     }
   };
   return {
