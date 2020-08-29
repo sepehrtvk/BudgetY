@@ -50,6 +50,18 @@ var budgetController = (function () {
       data.allItmes[type].push(newItem);
       return newItem;
     },
+    deleteItem: function (type, id) {
+      var ids, index;
+
+      ids = data.allItmes[type].map(function (current) {
+        return current.id;
+      });
+
+      index = ids.indexOf(id);
+      if (index !== -1) {
+        data.allItmes[type].splice(index, 1);
+      }
+    },
     calculateBudget: function () {
       calculateTotal("inc");
       calculateTotal("exp");
@@ -86,7 +98,7 @@ var UIController = (function () {
     incomeLabel: ".budget__income--value",
     expensesLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
-    container: '.container'
+    container: ".container",
   };
 
   return {
@@ -165,7 +177,9 @@ var controller = (function (budgetCtrl, UICtrl) {
       }
     });
 
-    document.querySelector(DOMStrings.container).addEventListener('click',ctrlDeleteItem);
+    document
+      .querySelector(DOMStrings.container)
+      .addEventListener("click", ctrlDeleteItem);
   };
   var updateBudget = function () {
     budgetCtrl.calculateBudget();
@@ -191,18 +205,17 @@ var controller = (function (budgetCtrl, UICtrl) {
       updateBudget();
     }
   };
-  
-  var ctrlDeleteItem = function(e){
-      var itemID , ID , type , splitID;
 
-      if(itemID){
-        splitID = itemID.split('-');
-        type = splitID[0];
-        ID = splitID[1];
+  var ctrlDeleteItem = function (e) {
+    var itemID, ID, type, splitID;
 
-        
+    if (itemID) {
+      splitID = itemID.split("-");
+      type = splitID[0];
+      ID = parseInt(splitID[1]);
 
-      }
+      budgetCtrl.deleteItem(type,ID);
+    }
   };
   return {
     init: function () {
