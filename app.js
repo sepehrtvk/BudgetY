@@ -11,6 +11,14 @@ var budgetController = (function () {
     this.value = value;
   };
 
+  var calculateTotal = function (type) {
+    var sum = 0;
+    data.allItmes[type].forEach(function (cur) {
+      sum += cur.value;
+    });
+    data.totals[type] = sum;
+  };
+
   var data = {
     allItmes: {
       exp: [],
@@ -20,6 +28,8 @@ var budgetController = (function () {
       exp: 0,
       inc: 0,
     },
+    budget: 0,
+    percentage: -1,
   };
 
   return {
@@ -40,6 +50,26 @@ var budgetController = (function () {
       data.allItmes[type].push(newItem);
       return newItem;
     },
+    calculateBudget: function () {
+      calculateTotal("inc");
+      calculateTotal("exp");
+      
+      data.budget = data.totals.inc - data.totals.exp;
+
+      if(data.totals.inc > 0){
+        data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+      } else {
+        data.percentage = -1;
+      }
+    },
+    getBudget: function(){
+      return{
+        budget : data.budget,
+        totalInc : data.totals.inc,
+        totalExp : data.totals.exp,
+        percentage : data.percentage
+      }
+    }
   };
 })();
 
@@ -96,6 +126,7 @@ var UIController = (function () {
       fieldsArr[0].focus();
     },
 
+
     getDOMStrings: function () {
       return DOMStrings;
     },
@@ -117,7 +148,14 @@ var controller = (function (budgetCtrl, UICtrl) {
       }
     });
   };
-  var updateBudget = function () {};
+  var updateBudget = function () {
+
+    budgetCtrl.calculateBudget();
+
+    var budget = budgetCtrl.getBudget();
+
+
+  };
 
   var ctrlAddItem = function () {
     var input = UICtrl.getInput();
