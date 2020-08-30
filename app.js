@@ -4,7 +4,21 @@ var budgetController = (function () {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
   };
+
+  Expense.prototype.caclPercetage = function (totalIncome) {
+    if (totalIncome > 0) {
+      this.percentage = Math.round((this.value / totalIncome) * 100);
+    } else {
+      this.percentage = -1;
+    }
+  };
+
+  Expense.prototype.getPercentage = function () {
+    return this.percentage;
+  };
+
   var Income = function (id, description, value) {
     this.id = id;
     this.description = description;
@@ -74,6 +88,17 @@ var budgetController = (function () {
         data.percentage = -1;
       }
     },
+    calculatePercentages: function () {
+      data.allItmes.exp.forEach(function (cur) {
+        cur.caclPercetage(data.totals.inc);
+      });
+    },
+    getPercentages: function () {
+      var allPerc = data.allItmes.exp.forEach(function (cur) {
+        return cur.getPercentage();
+      });
+      return allPerc;
+    },
     getBudget: function () {
       return {
         budget: data.budget,
@@ -129,10 +154,9 @@ var UIController = (function () {
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
     },
 
-    deleteItemList: function(selectorID){
+    deleteItemList: function (selectorID) {
       var el = document.getElementById(selectorID);
       el.parentNode.removeChild(el);
-
     },
 
     clearFields: function () {
@@ -195,6 +219,11 @@ var controller = (function (budgetCtrl, UICtrl) {
     UICtrl.displayBudget(budget);
   };
 
+  var updatePercetanges = function () {
+    budgetCtrl.calculatePercetanges();
+    var percetanges = budgetCtrl.getPercetanges();
+  };
+
   var ctrlAddItem = function () {
     var input = UICtrl.getInput();
 
@@ -209,6 +238,8 @@ var controller = (function (budgetCtrl, UICtrl) {
       UICtrl.clearFields();
 
       updateBudget();
+
+      updatePercetanges();
     }
   };
 
@@ -222,9 +253,10 @@ var controller = (function (budgetCtrl, UICtrl) {
       type = splitID[0];
       ID = parseInt(splitID[1]);
 
-      budgetCtrl.deleteItem(type,ID);
+      budgetCtrl.deleteItem(type, ID);
       UICtrl.deleteItemList(itemID);
       updateBudget();
+      updatePercetanges();
     }
   };
   return {
